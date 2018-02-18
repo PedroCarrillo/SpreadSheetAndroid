@@ -46,6 +46,23 @@ class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.Vie
         initDependencies()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.dispose()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RQ_GOOGLE_SIGN_IN) {
+            if (resultCode == Activity.RESULT_OK) {
+                Log.e(TAG, "log in successfully")
+                presenter.loginSuccessful()
+            } else {
+                presenter.loginFailed()
+            }
+        }
+    }
+
     private fun initDependencies() {
         val signInOptions : GoogleSignInOptions =
                 GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -88,18 +105,6 @@ class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.Vie
 
     override fun showName(username : String) {
         tvUsername.text = username
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RQ_GOOGLE_SIGN_IN) {
-            if (resultCode == Activity.RESULT_OK) {
-                Log.e(TAG, "log in successfully")
-                presenter.loginSuccessful()
-            } else {
-                presenter.loginFailed()
-            }
-        }
     }
 
     companion object {
