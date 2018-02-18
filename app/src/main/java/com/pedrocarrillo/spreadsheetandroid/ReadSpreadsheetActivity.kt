@@ -1,6 +1,7 @@
 package com.pedrocarrillo.spreadsheetandroid
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,9 +11,6 @@ import android.util.Log
 import android.widget.TextView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.Scope
-import com.google.android.gms.drive.Drive
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -21,6 +19,9 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.pedrocarrillo.spreadsheetandroid.data.model.Person
 import com.pedrocarrillo.spreadsheetandroid.ui.adapter.SpreadsheetAdapter
+import com.pedrocarrillo.spreadsheetandroid.ui.read.AuthenticationManager
+import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetContract
+import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetPresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
@@ -31,22 +32,37 @@ import java.util.*
  * @author Pedro Carrillo
  */
 
-class ReadSpreadsheetActivity : AppCompatActivity() {
+class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.View {
 
-    // authentication client
-    lateinit var googleSignInClient : GoogleSignInClient
     // Google Account Credential
     lateinit var googleAccountCredential : GoogleAccountCredential
     // views
     lateinit var tvUsername : TextView
     lateinit var rvSpreadsheet : RecyclerView
 
+    lateinit var presenter : ReadSpreadsheetContract.Presenter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_spreadsheet)
         bindingViews()
+        presenter = ReadSpreadsheetPresenter(this, AuthenticationManager(lazyOf(this)))
         initComponents()
-        startActivityForResultSignIn()
+        presenter.init()
+    }
+
+    override fun showError(error: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showPeople(people: List<Person>) {
+        val adapter = SpreadsheetAdapter(people)
+        rvSpreadsheet.layoutManager = LinearLayoutManager(this)
+        rvSpreadsheet.adapter = adapter
+    }
+
+    override fun launchAuthentication(client: GoogleSignInClient) {
+        startActivityForResult(client.signInIntent, RQ_GOOGLE_SIGN_IN)
     }
 
     private fun bindingViews() {
@@ -83,7 +99,6 @@ class ReadSpreadsheetActivity : AppCompatActivity() {
     }
 
     private fun initComponents() {
-        googleSignInClient = buildClient()
         googleAccountCredential =
                 GoogleAccountCredential.usingOAuth2(applicationContext, Arrays.asList(*SCOPES))
                         .setBackOff(ExponentialBackOff())
@@ -91,10 +106,6 @@ class ReadSpreadsheetActivity : AppCompatActivity() {
 
     private fun showName(username : String?) {
         tvUsername.text = username
-    }
-
-    private fun startActivityForResultSignIn() {
-        startActivityForResult(googleSignInClient.signInIntent, RQ_GOOGLE_SIGN_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -108,16 +119,6 @@ class ReadSpreadsheetActivity : AppCompatActivity() {
                 startReadingSpreadSheet(spreadsheetId, range, obtainingSheetsApi())
             }
         }
-    }
-
-    private fun buildClient(): GoogleSignInClient {
-        val signInOptions : GoogleSignInOptions =
-                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestScopes(Scope(SheetsScopes.SPREADSHEETS_READONLY))
-                        .requestScopes(Drive.SCOPE_FILE)
-                        .requestEmail()
-                        .build()
-        return GoogleSignIn.getClient(this, signInOptions)
     }
 
     companion object {
