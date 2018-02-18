@@ -13,11 +13,14 @@ interface ReadSpreadsheetContract {
 
     interface View : BaseView{
         fun showPeople(people : List<Person>)
+        fun showName(username : String)
         fun launchAuthentication(client : GoogleSignInClient)
     }
 
     interface Presenter : BasePresenter {
         fun startAuthentication()
+        fun loginSuccessful()
+        fun loginFailed()
     }
 
 }
