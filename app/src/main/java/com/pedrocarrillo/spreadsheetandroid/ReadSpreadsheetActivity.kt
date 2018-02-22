@@ -34,7 +34,6 @@ import java.util.*
 
 class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.View {
 
-    // views
     private lateinit var tvUsername : TextView
     private lateinit var rvSpreadsheet : RecyclerView
 
@@ -56,7 +55,6 @@ class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.Vie
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RQ_GOOGLE_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.e(TAG, "log in successfully")
                 presenter.loginSuccessful()
             } else {
                 presenter.loginFailed()
@@ -75,7 +73,11 @@ class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.Vie
         val googleAccountCredential = GoogleAccountCredential
                 .usingOAuth2(this, Arrays.asList(*AuthenticationManager.SCOPES))
                 .setBackOff(ExponentialBackOff())
-        val authManager = AuthenticationManager(lazyOf(this), googleSignInClient, googleAccountCredential)
+        val authManager =
+                AuthenticationManager(
+                        lazyOf(this),
+                        googleSignInClient,
+                        googleAccountCredential)
         val sheetsApidatasource =
                 SheetsAPIDataSource(authManager,
                         AndroidHttp.newCompatibleTransport(),
@@ -86,6 +88,12 @@ class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.Vie
 
     }
 
+    private fun bindingViews() {
+        tvUsername = findViewById(R.id.tv_username)
+        rvSpreadsheet = findViewById(R.id.rv_spreadsheet)
+    }
+
+    // View related implementations
     override fun showError(error: String) {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
     }
@@ -98,11 +106,6 @@ class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.Vie
 
     override fun launchAuthentication(client: GoogleSignInClient) {
         startActivityForResult(client.signInIntent, RQ_GOOGLE_SIGN_IN)
-    }
-
-    private fun bindingViews() {
-        tvUsername = findViewById(R.id.tv_username)
-        rvSpreadsheet = findViewById(R.id.rv_spreadsheet)
     }
 
     override fun showName(username : String) {
