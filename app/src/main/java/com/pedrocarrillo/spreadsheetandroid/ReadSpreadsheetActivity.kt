@@ -20,11 +20,12 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.pedrocarrillo.spreadsheetandroid.data.model.Person
+import com.pedrocarrillo.spreadsheetandroid.data.repository.SheetsAPIDataSource
+import com.pedrocarrillo.spreadsheetandroid.data.repository.SheetsRepository
 import com.pedrocarrillo.spreadsheetandroid.ui.adapter.SpreadsheetAdapter
-import com.pedrocarrillo.spreadsheetandroid.ui.read.AuthenticationManager
+import com.pedrocarrillo.spreadsheetandroid.ui.base.AuthenticationManager
 import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetContract
 import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetPresenter
-import com.pedrocarrillo.spreadsheetandroid.ui.read.SheetsAPIManager
 import java.util.*
 
 /**
@@ -34,10 +35,10 @@ import java.util.*
 class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.View {
 
     // views
-    lateinit var tvUsername : TextView
-    lateinit var rvSpreadsheet : RecyclerView
+    private lateinit var tvUsername : TextView
+    private lateinit var rvSpreadsheet : RecyclerView
 
-    lateinit var presenter : ReadSpreadsheetContract.Presenter
+    private lateinit var presenter : ReadSpreadsheetContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,11 +76,12 @@ class ReadSpreadsheetActivity : AppCompatActivity(), ReadSpreadsheetContract.Vie
                 .usingOAuth2(this, Arrays.asList(*AuthenticationManager.SCOPES))
                 .setBackOff(ExponentialBackOff())
         val authManager = AuthenticationManager(lazyOf(this), googleSignInClient, googleAccountCredential)
-        val sheetsApi =
-                SheetsAPIManager(authManager,
+        val sheetsApidatasource =
+                SheetsAPIDataSource(authManager,
                         AndroidHttp.newCompatibleTransport(),
                         JacksonFactory.getDefaultInstance())
-        presenter = ReadSpreadsheetPresenter(this, authManager, sheetsApi)
+        val sheetsRepository = SheetsRepository(sheetsApidatasource)
+        presenter = ReadSpreadsheetPresenter(this, authManager, sheetsRepository)
         presenter.init()
 
     }

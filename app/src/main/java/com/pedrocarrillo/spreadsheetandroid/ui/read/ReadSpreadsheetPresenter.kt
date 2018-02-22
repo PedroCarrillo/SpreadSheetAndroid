@@ -1,6 +1,8 @@
 package com.pedrocarrillo.spreadsheetandroid.ui.read
 
 import com.pedrocarrillo.spreadsheetandroid.data.model.Person
+import com.pedrocarrillo.spreadsheetandroid.data.repository.SheetsRepository
+import com.pedrocarrillo.spreadsheetandroid.ui.base.AuthenticationManager
 import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetContract.Presenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -11,9 +13,9 @@ import io.reactivex.schedulers.Schedulers
  * @author Pedro Carrillo
  */
 
-class ReadSpreadsheetPresenter(val view: ReadSpreadsheetContract.View,
-                               val authenticationManager: AuthenticationManager,
-                               val sheetsApi : SheetsAPIManager) : Presenter {
+class ReadSpreadsheetPresenter(private val view: ReadSpreadsheetContract.View,
+                               private val authenticationManager: AuthenticationManager,
+                               private val sheetsRepository: SheetsRepository) : Presenter {
 
     lateinit var readSpreadsheetDisposable : Disposable
 
@@ -41,7 +43,7 @@ class ReadSpreadsheetPresenter(val view: ReadSpreadsheetContract.View,
 
     private fun startReadingSpreadsheet(spreadsheetId : String, range : String) {
         readSpreadsheetDisposable=
-                sheetsApi.readSpreadSheet(spreadsheetId, range)
+                sheetsRepository.readSpreadSheet(spreadsheetId, range)
                 .flatMapIterable { it -> it }
                 .map { Person(it[0].toString(), it[4].toString()) }
                 .toList()

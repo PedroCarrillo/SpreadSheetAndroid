@@ -50,6 +50,8 @@ dependencies {
     // Adding RxJava2 support
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+    // Debugging
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
