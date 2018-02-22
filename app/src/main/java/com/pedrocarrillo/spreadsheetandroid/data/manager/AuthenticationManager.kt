@@ -1,4 +1,4 @@
-package com.pedrocarrillo.spreadsheetandroid.ui.base
+package com.pedrocarrillo.spreadsheetandroid.data.manager
 
 import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn

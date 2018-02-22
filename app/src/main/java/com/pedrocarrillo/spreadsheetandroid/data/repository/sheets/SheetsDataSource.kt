@@ -1,4 +1,4 @@
-package com.pedrocarrillo.spreadsheetandroid.data.repository
+package com.pedrocarrillo.spreadsheetandroid.data.repository.sheets
 
 import io.reactivex.Observable
 

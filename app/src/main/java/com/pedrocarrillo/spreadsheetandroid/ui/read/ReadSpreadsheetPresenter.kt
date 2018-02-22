@@ -1,8 +1,8 @@
 package com.pedrocarrillo.spreadsheetandroid.ui.read
 
 import com.pedrocarrillo.spreadsheetandroid.data.model.Person
-import com.pedrocarrillo.spreadsheetandroid.data.repository.SheetsRepository
-import com.pedrocarrillo.spreadsheetandroid.ui.base.AuthenticationManager
+import com.pedrocarrillo.spreadsheetandroid.data.repository.sheets.SheetsRepository
+import com.pedrocarrillo.spreadsheetandroid.data.manager.AuthenticationManager
 import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetContract.Presenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

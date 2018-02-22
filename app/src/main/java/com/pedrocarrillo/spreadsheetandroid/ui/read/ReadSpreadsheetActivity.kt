@@ -1,4 +1,4 @@
-package com.pedrocarrillo.spreadsheetandroid
+package com.pedrocarrillo.spreadsheetandroid.ui.read
 
 import android.app.Activity
 import android.content.Intent
@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -19,13 +18,12 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.SheetsScopes
+import com.pedrocarrillo.spreadsheetandroid.R
 import com.pedrocarrillo.spreadsheetandroid.data.model.Person
-import com.pedrocarrillo.spreadsheetandroid.data.repository.SheetsAPIDataSource
-import com.pedrocarrillo.spreadsheetandroid.data.repository.SheetsRepository
+import com.pedrocarrillo.spreadsheetandroid.data.repository.sheets.SheetsAPIDataSource
+import com.pedrocarrillo.spreadsheetandroid.data.repository.sheets.SheetsRepository
 import com.pedrocarrillo.spreadsheetandroid.ui.adapter.SpreadsheetAdapter
-import com.pedrocarrillo.spreadsheetandroid.ui.base.AuthenticationManager
-import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetContract
-import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetPresenter
+import com.pedrocarrillo.spreadsheetandroid.data.manager.AuthenticationManager
 import java.util.*
 
 /**

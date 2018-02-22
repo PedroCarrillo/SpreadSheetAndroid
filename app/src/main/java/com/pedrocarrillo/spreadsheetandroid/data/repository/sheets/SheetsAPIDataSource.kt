@@ -1,9 +1,9 @@
-package com.pedrocarrillo.spreadsheetandroid.data.repository
+package com.pedrocarrillo.spreadsheetandroid.data.repository.sheets
 
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.json.JsonFactory
 import com.google.api.services.sheets.v4.Sheets
-import com.pedrocarrillo.spreadsheetandroid.ui.base.AuthenticationManager
+import com.pedrocarrillo.spreadsheetandroid.data.manager.AuthenticationManager
 import io.reactivex.Observable
 
 /**

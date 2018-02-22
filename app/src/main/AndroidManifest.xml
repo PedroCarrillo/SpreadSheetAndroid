@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ReadSpreadsheetActivity">
+        <activity android:name=".ui.read.ReadSpreadsheetActivity">
         </activity>
 
     </application>
