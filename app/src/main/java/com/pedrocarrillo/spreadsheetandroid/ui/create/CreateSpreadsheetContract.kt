@@ -16,6 +16,7 @@ interface CreateSpreadsheetContract {
         fun launchAuthentication(client : GoogleSignInClient)
         fun initList(people: MutableList<Person>)
         fun clearFields()
+        fun showResult(id : String, url : String)
     }
 
     interface Presenter : BasePresenter {

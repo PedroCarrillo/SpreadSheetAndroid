@@ -7,6 +7,7 @@ import com.google.api.services.sheets.v4.model.*
  */
 class SpreadsheetMaker {
 
+    // Will create an Spreadsheet
     fun create(spreadsheetTitle : String,
                sheetOneTitle : String,
                people: List<Person>) : Spreadsheet {
@@ -22,6 +23,7 @@ class SpreadsheetMaker {
         return spreadsheet
     }
 
+    // Will create a Sheet to be added to the spreadsheet and apply new properties
     private class PeopleSheetMaker {
 
         fun create(title : String, people: List<Person>) : Sheet {
@@ -39,6 +41,7 @@ class SpreadsheetMaker {
 
     }
 
+    // Will create a grid data with an specific start row, start column and the data you want to display
     private class GridDataMaker {
 
         fun create(people : List<Person>, startRow : Int, startColumn : Int) : GridData {
@@ -54,6 +57,7 @@ class SpreadsheetMaker {
 
     }
 
+    // Will create a row with an specific number of cells
     private class RowDataMaker {
 
         fun create(name : String, major : String) : RowData {
@@ -68,6 +72,7 @@ class SpreadsheetMaker {
 
     }
 
+    // Will create a cell with its specific data
     private class CellDataMaker {
 
         fun create(data : String) : CellData {

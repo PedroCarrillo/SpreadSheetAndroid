@@ -32,17 +32,15 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    // Required for authentication of account.
-    implementation "com.google.android.gms:play-services-drive:$playServicesVersion"
-    // Required if target is only to upload files to folders
-    implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
 
-    //Trying new stuff
-    implementation 'pub.devrel:easypermissions:0.3.0'
-    // Adding Sheets API support
+    implementation "com.google.android.gms:play-services-drive:$playServicesVersion"
+
+    // Required for authentication of account.
+    implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
     implementation('com.google.api-client:google-api-client-android:1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
+
     implementation('com.google.apis:google-api-services-sheets:v4-rev505-1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }

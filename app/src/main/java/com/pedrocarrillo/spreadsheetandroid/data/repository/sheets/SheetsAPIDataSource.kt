@@ -7,16 +7,18 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties
 import com.pedrocarrillo.spreadsheetandroid.data.manager.AuthenticationManager
+import com.pedrocarrillo.spreadsheetandroid.data.model.Person
+import com.pedrocarrillo.spreadsheetandroid.data.model.SpreadsheetInfo
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 /**
 * @author Pedro Carrillo.
 */
-class SheetsAPIDataSource(val authManager : AuthenticationManager,
-                          val transport : HttpTransport,
-                          val jsonFactory: JsonFactory) : SheetsDataSource {
-
+class SheetsAPIDataSource(private val authManager : AuthenticationManager,
+                          private val transport : HttpTransport,
+                          private val jsonFactory: JsonFactory) : SheetsDataSource {
 
     private val sheetsAPI : Sheets
         get() {
@@ -28,16 +30,19 @@ class SheetsAPIDataSource(val authManager : AuthenticationManager,
         }
 
     override fun readSpreadSheet(spreadsheetId: String,
-                                 spreadsheetRange: String): Observable<MutableList<MutableList<Any>>> {
+                                 spreadsheetRange: String): Single<List<Person>> {
         return Observable
                 .fromCallable{
                     val response = sheetsAPI.spreadsheets().values()
                             .get(spreadsheetId, spreadsheetRange)
                             .execute()
                     response.getValues() }
+                .flatMapIterable { it -> it }
+                .map { Person(it[0].toString(), it[4].toString()) }
+                .toList()
     }
 
-    override fun createSpreadsheet(spreadSheet : Spreadsheet) : Observable<MutableCollection<Any>> {
+    override fun createSpreadsheet(spreadSheet : Spreadsheet) : Observable<SpreadsheetInfo> {
         return Observable
                 .fromCallable{
                     val response =
@@ -45,7 +50,12 @@ class SheetsAPIDataSource(val authManager : AuthenticationManager,
                                     .spreadsheets()
                                     .create(spreadSheet)
                                     .execute()
-                    response.values
-                }
+                    response }
+                .map { SpreadsheetInfo(it[KEY_ID] as String, it[KEY_URL] as String) }
+    }
+
+    companion object {
+        val KEY_ID = "spreadsheetId"
+        val KEY_URL = "spreadsheetUrl"
     }
 }

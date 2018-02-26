@@ -47,9 +47,6 @@ class ReadSpreadsheetPresenter(private val view: ReadSpreadsheetContract.View,
         people.clear()
         readSpreadsheetDisposable=
                 sheetsRepository.readSpreadSheet(spreadsheetId, range)
-                .flatMapIterable { it -> it }
-                .map { Person(it[0].toString(), it[4].toString()) }
-                .toList()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { view.showError(it.message!!) }

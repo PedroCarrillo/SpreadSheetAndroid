@@ -26,7 +26,6 @@ import com.pedrocarrillo.spreadsheetandroid.data.repository.sheets.SheetsAPIData
 import com.pedrocarrillo.spreadsheetandroid.data.repository.sheets.SheetsRepository
 import com.pedrocarrillo.spreadsheetandroid.ui.adapter.SpreadsheetAdapter
 import com.pedrocarrillo.spreadsheetandroid.ui.base.BaseActivity
-import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetActivity
 import java.util.*
 
 /**
@@ -133,6 +132,10 @@ class CreateSpreadsheetActivity :
 
     override fun launchAuthentication(client: GoogleSignInClient) {
         startActivityForResult(client.signInIntent, CreateSpreadsheetActivity.RQ_GOOGLE_SIGN_IN)
+    }
+
+    override fun showResult(id: String, url: String) {
+        Toast.makeText(this, "spreadheet created id: "+ id , Toast.LENGTH_SHORT).show()
     }
 
     companion object {
