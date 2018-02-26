@@ -17,7 +17,8 @@ class ReadSpreadsheetPresenter(private val view: ReadSpreadsheetContract.View,
                                private val authenticationManager: AuthenticationManager,
                                private val sheetsRepository: SheetsRepository) : Presenter {
 
-    lateinit var readSpreadsheetDisposable : Disposable
+    private lateinit var readSpreadsheetDisposable : Disposable
+    private val people : MutableList<Person> = mutableListOf()
 
     override fun startAuthentication() {
         view.launchAuthentication(authenticationManager.googleSignInClient)
@@ -25,6 +26,7 @@ class ReadSpreadsheetPresenter(private val view: ReadSpreadsheetContract.View,
 
     override fun init() {
         startAuthentication()
+        view.initList(people)
     }
 
     override fun dispose() {
@@ -38,10 +40,11 @@ class ReadSpreadsheetPresenter(private val view: ReadSpreadsheetContract.View,
     }
 
     override fun loginFailed() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     private fun startReadingSpreadsheet(spreadsheetId : String, range : String) {
+        people.clear()
         readSpreadsheetDisposable=
                 sheetsRepository.readSpreadSheet(spreadsheetId, range)
                 .flatMapIterable { it -> it }
@@ -49,9 +52,10 @@ class ReadSpreadsheetPresenter(private val view: ReadSpreadsheetContract.View,
                 .toList()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { view.showError(it.localizedMessage) }
+                .doOnError { view.showError(it.message!!) }
                 .subscribe(Consumer {
-                    view.showPeople(it)
+                    people.addAll(it)
+                    view.showPeople()
                 })
     }
 

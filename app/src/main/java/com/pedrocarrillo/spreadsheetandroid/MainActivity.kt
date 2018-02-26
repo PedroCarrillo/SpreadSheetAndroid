@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import com.pedrocarrillo.spreadsheetandroid.ui.create.CreateSpreadsheetActivity
 import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetActivity
 
 class MainActivity : AppCompatActivity() {
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(readSpreadsheetIntent)
         }
         btnCreateSpreadsheet.setOnClickListener {
-            val createSpreadsheetIntent = Intent(this, ReadSpreadsheetActivity::class.java)
+            val createSpreadsheetIntent = Intent(this, CreateSpreadsheetActivity::class.java)
             startActivity(createSpreadsheetIntent)
         }
     }

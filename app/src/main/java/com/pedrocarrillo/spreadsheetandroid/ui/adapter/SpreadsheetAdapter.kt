@@ -11,7 +11,7 @@ import com.pedrocarrillo.spreadsheetandroid.data.model.Person
 /**
  * @author Pedro Carrillo
  */
-class SpreadsheetAdapter(val items : List<Person>) : RecyclerView.Adapter<SpreadsheetAdapter.RowViewHolder>() {
+class SpreadsheetAdapter(val items : MutableList<Person>) : RecyclerView.Adapter<SpreadsheetAdapter.RowViewHolder>() {
 
     override fun getItemCount(): Int = items.size
 

@@ -1,9 +1,13 @@
 package com.pedrocarrillo.spreadsheetandroid.data.repository.sheets
 
+import android.util.Log
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.json.JsonFactory
 import com.google.api.services.sheets.v4.Sheets
+import com.google.api.services.sheets.v4.model.Spreadsheet
+import com.google.api.services.sheets.v4.model.SpreadsheetProperties
 import com.pedrocarrillo.spreadsheetandroid.data.manager.AuthenticationManager
+import io.reactivex.Completable
 import io.reactivex.Observable
 
 /**
@@ -31,5 +35,17 @@ class SheetsAPIDataSource(val authManager : AuthenticationManager,
                             .get(spreadsheetId, spreadsheetRange)
                             .execute()
                     response.getValues() }
+    }
+
+    override fun createSpreadsheet(spreadSheet : Spreadsheet) : Observable<MutableCollection<Any>> {
+        return Observable
+                .fromCallable{
+                    val response =
+                            sheetsAPI
+                                    .spreadsheets()
+                                    .create(spreadSheet)
+                                    .execute()
+                    response.values
+                }
     }
 }

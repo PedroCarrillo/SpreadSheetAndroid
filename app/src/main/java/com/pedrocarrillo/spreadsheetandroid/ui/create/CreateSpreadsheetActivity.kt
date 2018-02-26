@@ -1,10 +1,12 @@
-package com.pedrocarrillo.spreadsheetandroid.ui.read
+package com.pedrocarrillo.spreadsheetandroid.ui.create
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -18,36 +20,40 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.pedrocarrillo.spreadsheetandroid.R
+import com.pedrocarrillo.spreadsheetandroid.data.manager.AuthenticationManager
 import com.pedrocarrillo.spreadsheetandroid.data.model.Person
 import com.pedrocarrillo.spreadsheetandroid.data.repository.sheets.SheetsAPIDataSource
 import com.pedrocarrillo.spreadsheetandroid.data.repository.sheets.SheetsRepository
 import com.pedrocarrillo.spreadsheetandroid.ui.adapter.SpreadsheetAdapter
-import com.pedrocarrillo.spreadsheetandroid.data.manager.AuthenticationManager
 import com.pedrocarrillo.spreadsheetandroid.ui.base.BaseActivity
+import com.pedrocarrillo.spreadsheetandroid.ui.read.ReadSpreadsheetActivity
 import java.util.*
 
 /**
- * @author Pedro Carrillo
+ * @author Pedro Carrillo.
  */
+class CreateSpreadsheetActivity :
+        BaseActivity<CreateSpreadsheetContract.Presenter>(), CreateSpreadsheetContract.View {
 
-class ReadSpreadsheetActivity :
-        BaseActivity<ReadSpreadsheetContract.Presenter>(), ReadSpreadsheetContract.View {
-
-    private lateinit var tvUsername : TextView
+    private lateinit var btnAdd : Button
+    private lateinit var btnUpload : Button
+    private lateinit var etName : EditText
+    private lateinit var etMajor : EditText
+    private lateinit var tvUser : TextView
     private lateinit var rvSpreadsheet : RecyclerView
 
     private lateinit var spreadSheetAdapter : SpreadsheetAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_read_spreadsheet)
+        setContentView(R.layout.activity_create_spreadsheet)
         bindingViews()
         presenter.init()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RQ_GOOGLE_SIGN_IN) {
+        if (requestCode == CreateSpreadsheetActivity.RQ_GOOGLE_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
                 presenter.loginSuccessful()
             } else {
@@ -60,7 +66,6 @@ class ReadSpreadsheetActivity :
         val signInOptions : GoogleSignInOptions =
                 GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestScopes(Scope(SheetsScopes.SPREADSHEETS_READONLY))
-                        .requestScopes(Scope(SheetsScopes.SPREADSHEETS))
                         .requestScopes(Drive.SCOPE_FILE)
                         .requestEmail()
                         .build()
@@ -78,19 +83,29 @@ class ReadSpreadsheetActivity :
                         AndroidHttp.newCompatibleTransport(),
                         JacksonFactory.getDefaultInstance())
         val sheetsRepository = SheetsRepository(sheetsApiDataSource)
-        presenter = ReadSpreadsheetPresenter(this, authManager, sheetsRepository)
-
+        presenter = CreateSpreadsheetPresenter(this, authManager, sheetsRepository)
     }
 
     private fun bindingViews() {
-        tvUsername = findViewById(R.id.tv_username)
         rvSpreadsheet = findViewById(R.id.rv_spreadsheet)
+        tvUser = findViewById(R.id.tv_username)
+        btnAdd = findViewById(R.id.btn_add)
+        btnUpload = findViewById(R.id.btn_upload)
+        etMajor = findViewById(R.id.et_major)
+        etName = findViewById(R.id.et_name)
+        btnAdd.setOnClickListener({
+            addPerson()
+        })
+        btnUpload.setOnClickListener({
+            presenter.uploadPeopleList()
+        })
     }
 
-    // View related implementations
-    override fun showError(error: String) {
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+    private fun addPerson() {
+        presenter.addPerson(etName.text.toString(), etMajor.text.toString())
     }
+
+    // View implementation
 
     override fun initList(people: MutableList<Person>) {
         spreadSheetAdapter = SpreadsheetAdapter(people)
@@ -98,21 +113,32 @@ class ReadSpreadsheetActivity :
         rvSpreadsheet.adapter = spreadSheetAdapter
     }
 
-    override fun showPeople() {
+    override fun clearFields() {
+        etMajor.text.clear()
+        etName.text.clear()
+        etName.requestFocus()
+    }
+
+    override fun showError(error: String) {
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showPerson() {
         spreadSheetAdapter.notifyDataSetChanged()
     }
 
-    override fun launchAuthentication(client: GoogleSignInClient) {
-        startActivityForResult(client.signInIntent, RQ_GOOGLE_SIGN_IN)
+    override fun showName(username: String) {
+        tvUser.text = username
     }
 
-    override fun showName(username : String) {
-        tvUsername.text = username
+    override fun launchAuthentication(client: GoogleSignInClient) {
+        startActivityForResult(client.signInIntent, CreateSpreadsheetActivity.RQ_GOOGLE_SIGN_IN)
     }
 
     companion object {
         const val TAG = "ReadSpreadsheetActivity"
         const val RQ_GOOGLE_SIGN_IN = 999
     }
+
 
 }
