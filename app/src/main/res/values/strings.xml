@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">SpreadsheetAndroid</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="read_spreadsheet">Read spreadsheet</string>
+    <string name="create_spreadsheet">Create spreadsheet</string>
+    <string name="welcome">Welcome, we will try Sheets API</string>
+    <string name="add">Add</string>
+    <string name="upload">Upload</string>
+    <string name="major">Major</string>
+    <string name="name">Name</string>
 </resources>
